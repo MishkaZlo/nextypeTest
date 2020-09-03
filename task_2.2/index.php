@@ -1,9 +1,9 @@
 <?php
 require_once 'classes/UrlParser.php';
 
-$url = 'https://e-book74.ru/';
-$parsingPage = new UrlParser();
+$url = 'https://nextype.ru/';
+$parsingPage = new UrlParser($url);
 
 echo '<pre>';
-print_r($parsingPage->getAllLinks($url));
+print_r($parsingPage->getAllLinks());
 echo '</pre>';

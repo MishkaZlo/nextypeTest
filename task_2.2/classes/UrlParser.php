@@ -3,44 +3,46 @@
 
 class UrlParser
 {
+    const REGULAREXP = '/href="[^\"]{1,555}/';
+    public $url;
 
-
-    public function getContent($url)
+    public function __construct($url)
     {
-        return file_get_contents($url);
-
+        $this->url = $url;
     }
 
-    public function getAllLinks($url)
+    public function getContent()
     {
-        $content = $this->getContent($url);
+        return file_get_contents($this->url);
+    }
+
+    public function getAllLinks()
+    {
+        $content = $this->getContent();
         $explodingArray = $this->getStringWithATags($content);
-        $resultArray = $this->clearArray($explodingArray);
-
-        return $resultArray;
-
+        return $this->clearArray($explodingArray);
     }
 
     private function getStringWithATags($content)
     {
-        return explode('<a', $content);
+        $ArrayWithATags = explode('<a', $content);
+        array_shift($ArrayWithATags);
+        return $ArrayWithATags;
     }
 
     private function clearArray($explodingArray)
     {
-
-        /* ловим в строках тега <a> все начиная с атрибута 'href' до закрытой кавычки.
-Длина ссылки ограничена 555 символами (опционально, с запасом) */
-
-        $regExp = '/href="[^\"]{1,555}/';
         $matches = [];
         $links = [];
 
+        /* ловим в строках тега <a> всe, начиная с атрибута 'href' до закрытой кавычки.
+Длина ссылки ограничена 555 символами (опционально, с запасом) */
         foreach ($explodingArray as $str) {
-            if (preg_match($regExp, $str, $matches)) {
+            if (preg_match(self::REGULAREXP, $str, $matches)) {
                 $links [] = $matches[0];
             }
         }
+
         /* собираем массив с очищенным атрибутом 'href' */
         $strToDelete = 'href="';
         foreach ($links as $link) {
@@ -48,4 +50,5 @@ class UrlParser
         }
         return $resultArray;
     }
+
 }
